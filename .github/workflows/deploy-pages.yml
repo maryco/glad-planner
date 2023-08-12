@@ -29,13 +29,13 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
       - name: Build React
         run: yarn build
 
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: build
+          path: ./build
 
   deploy:
     needs: build
