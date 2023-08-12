@@ -6,15 +6,15 @@ import makeGridPatterns from '@/utils/makeGridPattern'
 import { Color } from '@/hooks/usePickerColors'
 
 type Props = {
-  colors: Array<Color>
-  exportImageHandlers: Array<CallableFunction>
+  colors: Color[]
+  exportImageHandlers: CallableFunction[]
 }
 
 function GridContainer(props: Props) {
   const GAP_OF_BLOCKS = 90
   const [stageWidth, setStageWidth] = useState(0)
   const [stageHeight, setStageHeight] = useState(0)
-  const [gridBlocks, setGridBlocks] = useState<Array<GridBlockProp>>([])
+  const [gridBlocks, setGridBlocks] = useState<GridBlockProp[]>([])
 
   useEffect(() => {
     setGridBlocks(makeGridPatterns(props.colors.map((color) => color.hex)))

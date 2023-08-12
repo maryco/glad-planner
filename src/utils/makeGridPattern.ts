@@ -1,4 +1,4 @@
-export const makeGridPatterns = (colors: Array<string>) => {
+export const makeGridPatterns = (colors: string[]) => {
   return [
     // 01
     {

@@ -4,7 +4,9 @@ import classNames from 'classnames'
 import ColorPickerButton from '@/components/ColorPickerButton'
 import GridContainer from '@/components/GridContainer'
 import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
+import { ReactComponent as IconCheckCircle } from '@/assets/icon_check_circle.svg'
 import { usePickerColors } from '@/hooks/usePickerColors'
+import { Tooltip } from '@/components/Tooltip.tsx'
 
 type GradationPlateProps = {
   $bgurl: string | null | undefined
@@ -21,7 +23,7 @@ const searchParams = new URLSearchParams(window.location.search)
 const colorParams = searchParams.getAll('color')
 
 function App() {
-  const { pickerColors, setPickerColors } = usePickerColors(colorParams)
+  const { pickerColors, setPickerColors, copyAsUrl } = usePickerColors(colorParams)
 
   const [gridImage1, setGridImage1] = useState<string | null>()
   const [gridImage2, setGridImage2] = useState<string | null>()
@@ -69,6 +71,15 @@ function App() {
     )
   }
 
+  const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
+  function snapshot() {
+    copyAsUrl()
+    setIsCopiedState(true)
+    setTimeout(() => {
+      setIsCopiedState(false)
+    }, 700)
+  }
+
   const previewContainerClasses = classNames('flex-grow flex h-auto w-full', {
     'flex-col': previewVerticalState,
     'flex-row': !previewVerticalState,
@@ -105,6 +116,19 @@ function App() {
                 onClick={() => setPreviewDirectionState(!previewVerticalState)}
               >
                 <IconFrameReload
+                  width={40}
+                  height={40}
+                  fill={'#94a3b8'}
+                  role={'button'}
+                />
+              </button>
+            </li>
+            <li className="relative w-10 h-10">
+              <Tooltip message={'URL Copied!'} positionClass={'top-2 -right-20'} visible={isCopiedState} />
+              <button
+                onClick={snapshot}
+              >
+                <IconCheckCircle
                   width={40}
                   height={40}
                   fill={'#94a3b8'}

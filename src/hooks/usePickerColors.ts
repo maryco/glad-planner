@@ -7,8 +7,9 @@ export type Color = {
 }
 
 export interface UsePickerColors {
-  pickerColors: Color[],
+  pickerColors: Color[]
   setPickerColors: Dispatch<SetStateAction<Color[]>>
+  copyAsUrl: () => void
 }
 
 const setInitialColor = (colors: string[], index: number, fallBack: string) => {
@@ -28,8 +29,14 @@ export function usePickerColors(initialColors: string[]): UsePickerColors {
     { uuid: useId(), hex: setInitialColor(initialColors, 4, '#9ca3af'), order: 4 },
   ])
 
+  const copyAsUrl = (): void => {
+    navigator.clipboard.writeText(`${window.location.origin}/?` + pickerColors.map(p => `color=${p.hex.replace('#', '')}`).join('&'))
+      .catch(e => console.error(e))
+  }
+
   return {
     pickerColors: pickerColors,
-    setPickerColors: setPickerColors
+    setPickerColors: setPickerColors,
+    copyAsUrl: copyAsUrl
   }
 }

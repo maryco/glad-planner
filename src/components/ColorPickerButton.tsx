@@ -4,6 +4,7 @@ import { HexColorPicker } from 'react-colorful'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import classNames from 'classnames'
 import { ReactComponent as IconCopy } from '@/assets/icon_content_copy.svg'
+import { Tooltip } from '@/components/Tooltip'
 
 type PickerButtonProps = {
   $bgcolor?: string
@@ -89,11 +90,7 @@ function ColorPickerButton(props: Props) {
           $bgcolor={pickedColor}
           onClick={() => setPickerState(!pickerState)}
         />
-        {isCopiedState && (
-          <span className="absolute z-20 -top-8 left-0 bg-blue-600 text-slate-50 p-1 rounded text-xs whitespace-nowrap transition-all">
-            Copied! {pickedColor}
-          </span>
-        )}
+        <Tooltip message={`Copied! ${pickedColor}`} positionClass={'-top-8 left-0'} visible={isCopiedState} />
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
           onClick={copyCurrentColor}

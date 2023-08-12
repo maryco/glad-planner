@@ -5,8 +5,8 @@ import { Group, Rect } from 'react-konva'
 export const DEFAULT_GRID_SIZE = 16
 
 export type GridBlockProp = {
-  oddColors: Array<string>
-  evenColors: Array<string>
+  oddColors: string[]
+  evenColors: string[]
   gridSize?: number
 }
 
