@@ -1,9 +1,9 @@
-import { Color } from '@/App'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { useEffect, useRef, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 import GridBlock, { GridBlockProp } from '@/components/GridBlock'
 import makeGridPatterns from '@/utils/makeGridPattern'
+import { Color } from '@/hooks/usePickerColors'
 
 type Props = {
   colors: Array<Color>

@@ -55,13 +55,16 @@ function ColorPickerButton(props: Props) {
     setPickerState(false)
   }
 
-  async function copyCurrentColor() {
+  function copyCurrentColor(): void {
     setIsCopiedState(true)
-    await navigator.clipboard.writeText(pickedColor).then(() =>
-      setTimeout(() => {
-        setIsCopiedState(false)
-      }, 700)
-    )
+    navigator.clipboard
+      .writeText(pickedColor)
+      .then(() =>
+        setTimeout(() => {
+          setIsCopiedState(false)
+        }, 700)
+      )
+      .catch((e) => console.error(e))
   }
 
   const invertedHexColor = (hexColor: string) => {
@@ -79,7 +82,7 @@ function ColorPickerButton(props: Props) {
   return (
     <>
       <div className={pickerClasses} ref={pickerRef}>
-        <HexColorPicker color={color} onChange={setPickedColor} />
+        <HexColorPicker color={pickedColor} onChange={setPickedColor} />
       </div>
       <div className="h-full">
         <PickerButton
@@ -93,7 +96,7 @@ function ColorPickerButton(props: Props) {
         )}
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
-          onClick={() => copyCurrentColor}
+          onClick={copyCurrentColor}
         >
           <IconCopy width={16} height={16} fill={invertedColor} />
         </span>

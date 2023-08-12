@@ -1,9 +1,10 @@
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { styled } from 'styled-components'
 import classNames from 'classnames'
 import ColorPickerButton from '@/components/ColorPickerButton'
 import GridContainer from '@/components/GridContainer'
 import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
+import { usePickerColors } from '@/hooks/usePickerColors'
 
 type GradationPlateProps = {
   $bgurl: string | null | undefined
@@ -15,22 +16,12 @@ const GradationPlate = styled.div<GradationPlateProps>`
   background-size: 20px;
 `
 
-export type Color = {
-  uuid: string
-  hex: string
-}
-
-export type GradationGrid = {
-  id: number
-  uri: string
-}
+// FIXME: ここでいいのか？
+const searchParams = new URLSearchParams(window.location.search)
+const colorParams = searchParams.getAll('color')
 
 function App() {
-  const [color1, setColor1] = useState<Color>({ uuid: useId(), hex: '#f9fafb' })
-  const [color2, setColor2] = useState<Color>({ uuid: useId(), hex: '#f3f4f6' })
-  const [color3, setColor3] = useState<Color>({ uuid: useId(), hex: '#e5e7eb' })
-  const [color4, setColor4] = useState<Color>({ uuid: useId(), hex: '#d1d5db' })
-  const [color5, setColor5] = useState<Color>({ uuid: useId(), hex: '#9ca3af' })
+  const { pickerColors, setPickerColors } = usePickerColors(colorParams)
 
   const [gridImage1, setGridImage1] = useState<string | null>()
   const [gridImage2, setGridImage2] = useState<string | null>()
@@ -42,7 +33,8 @@ function App() {
   const [gridImage8, setGridImage8] = useState<string | null>()
   const [gridImage9, setGridImage9] = useState<string | null>()
 
-  const [previewVerticalState, setPreviewDirectionState] = useState<boolean>(true)
+  const [previewVerticalState, setPreviewDirectionState] =
+    useState<boolean>(true)
 
   const setGridImages = Array.of(
     setGridImage1,
@@ -68,24 +60,16 @@ function App() {
     gridImage9
   )
 
-  const setColors = Array.of(
-    setColor1,
-    setColor2,
-    setColor3,
-    setColor4,
-    setColor5
-  )
   function updateGrid(id: string, colorVal: string) {
     // console.log(`${id} => ${colorVal}`)
-    Array.of(color1, color2, color3, color4, color5).forEach((color, index) => {
-      if (color.uuid === id) {
-        setColors[index]({ uuid: id, hex: colorVal })
-      }
-    })
+    setPickerColors(
+      pickerColors.map((p) =>
+        p.uuid === id ? { uuid: id, hex: colorVal, order: p.order } : p
+      )
+    )
   }
 
-  const previewContainerClasses = classNames({
-    'flex-grow flex h-auto w-full': true,
+  const previewContainerClasses = classNames('flex-grow flex h-auto w-full', {
     'flex-col': previewVerticalState,
     'flex-row': !previewVerticalState,
   })
@@ -100,22 +84,26 @@ function App() {
         </div>
         <div className="w-full p-4 bg-gray-200">
           <GridContainer
-            colors={[color1, color2, color3, color4, color5]}
+            colors={pickerColors.sort((a, b) => a.order - b.order)}
             exportImageHandlers={setGridImages}
           />
           <ul className="flex gap-4">
-            {[color1, color2, color3, color4, color5].map((color) => (
-              <li key={color.uuid} className="relative w-10 h-10">
-                <ColorPickerButton
-                  id={color.uuid}
-                  color={color.hex}
-                  onChangeHandler={updateGrid}
-                />
-              </li>
-            ))}
+            {pickerColors
+              .sort((a, b) => a.order - b.order)
+              .map((color) => (
+                <li key={color.uuid} className="relative w-10 h-10">
+                  <ColorPickerButton
+                    id={color.uuid}
+                    color={color.hex}
+                    onChangeHandler={updateGrid}
+                  />
+                </li>
+              ))}
             <li className="w-10 h-10"></li>
             <li className="w-10 h-10">
-              <button onClick={() => setPreviewDirectionState(!previewVerticalState)}>
+              <button
+                onClick={() => setPreviewDirectionState(!previewVerticalState)}
+              >
                 <IconFrameReload
                   width={40}
                   height={40}
