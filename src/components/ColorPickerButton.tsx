@@ -55,9 +55,9 @@ function ColorPickerButton(props: Props) {
     setPickerState(false)
   }
 
-  function copyCurrentColor() {
+  async function copyCurrentColor() {
     setIsCopiedState(true)
-    navigator.clipboard.writeText(pickedColor).then(() =>
+    await navigator.clipboard.writeText(pickedColor).then(() =>
       setTimeout(() => {
         setIsCopiedState(false)
       }, 700)
@@ -93,7 +93,7 @@ function ColorPickerButton(props: Props) {
         )}
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
-          onClick={copyCurrentColor}
+          onClick={() => copyCurrentColor}
         >
           <IconCopy width={16} height={16} fill={invertedColor} />
         </span>
