@@ -1,19 +1,20 @@
 name: build-and-deploy-github-pages
 
 on: 
-  page_build:
+  push:
+    branches:
+      - demo
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 6
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Install Yarn
+        run: npm install -g yarn@$YARN_VERSION
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -28,12 +29,13 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
       - name: Build React
         run: yarn build
 
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: build
+          path: ./build
 
   deploy:
     needs: build
