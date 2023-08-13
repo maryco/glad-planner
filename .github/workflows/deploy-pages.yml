@@ -31,7 +31,7 @@ jobs:
         run: yarn install
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
       - name: Build React
-        run: yarn build
+        run: yarn build:demo
 
       - uses: actions/upload-pages-artifact@v1
         with:
