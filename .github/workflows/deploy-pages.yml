@@ -13,12 +13,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install Yarn
-        run: npm install -g yarn@$YARN_VERSION
 
+      # https://docs.github.com/ja/actions/using-workflows/caching-dependencies-to-speed-up-workflows
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      # https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - uses: actions/cache@v3
         id: yarn-cache
         with:
@@ -28,8 +28,8 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install dependencies
-        run: yarn install
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
+        run: yarn install
       - name: Build React
         run: yarn build:demo
 
