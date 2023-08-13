@@ -30,7 +30,10 @@ export function usePickerColors(initialColors: string[]): UsePickerColors {
   ])
 
   const copyAsUrl = (): void => {
-    navigator.clipboard.writeText(`${window.location.origin}/?` + pickerColors.map(p => `color=${p.hex.replace('#', '')}`).join('&'))
+    const baseUrl = import.meta.env.MODE === 'demo'
+      ? import.meta.env.BASE_URL
+      : window.location.origin
+    navigator.clipboard.writeText(`${baseUrl}/?` + pickerColors.map(p => `color=${p.hex.replace('#', '')}`).join('&'))
       .catch(e => console.error(e))
   }
 
