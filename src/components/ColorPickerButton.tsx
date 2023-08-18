@@ -89,11 +89,13 @@ function ColorPickerButton(props: Props) {
         <PickerButton
           $bgcolor={pickedColor}
           onClick={() => setPickerState(!pickerState)}
+          aria-label='Open color picker'
         />
         <Tooltip message={`Copied! ${pickedColor}`} positionClass={'-top-8 left-0'} visible={isCopiedState} />
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
           onClick={copyCurrentColor}
+          aria-label='Copy color of hex'
         >
           <IconCopy width={16} height={16} fill={invertedColor} />
         </span>

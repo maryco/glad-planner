@@ -102,7 +102,7 @@ function App() {
             {pickerColors
               .sort((a, b) => a.order - b.order)
               .map((color) => (
-                <li key={color.uuid} className="relative w-10 h-10">
+                <li key={color.uuid} className="relative w-10 h-10" aria-colindex={color.order}>
                   <ColorPickerButton
                     id={color.uuid}
                     color={color.hex}
@@ -114,12 +114,12 @@ function App() {
             <li className="w-10 h-10">
               <button
                 onClick={() => setPreviewDirectionState(!previewVerticalState)}
+                aria-label='Switch orientation'
               >
                 <IconFrameReload
                   width={40}
                   height={40}
                   fill={'#94a3b8'}
-                  role={'button'}
                 />
               </button>
             </li>
@@ -127,12 +127,12 @@ function App() {
               <Tooltip message={'URL Copied!'} positionClass={'top-2 -right-20'} visible={isCopiedState} />
               <button
                 onClick={snapshot}
+                aria-label='Copy all colors as url'
               >
                 <IconCheckCircle
                   width={40}
                   height={40}
                   fill={'#94a3b8'}
-                  role={'button'}
                 />
               </button>
             </li>
