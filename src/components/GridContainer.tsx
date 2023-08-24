@@ -1,12 +1,11 @@
 import { useResizeObserver } from '@/hooks/useResizeObserver'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 import GridBlock, { GridBlockProp } from '@/components/GridBlock'
 import makeGridPatterns from '@/utils/makeGridPattern'
-import { Color } from '@/hooks/usePickerColors'
+import { PickedColorsContext } from '@/contexts/PickedColorsContext'
 
 type Props = {
-  colors: Color[]
   exportImageHandlers: CallableFunction[]
 }
 
@@ -16,9 +15,10 @@ function GridContainer(props: Props) {
   const [stageHeight, setStageHeight] = useState(0)
   const [gridBlocks, setGridBlocks] = useState<GridBlockProp[]>([])
 
+  const pickedColors = useContext(PickedColorsContext);
   useEffect(() => {
-    setGridBlocks(makeGridPatterns(props.colors.map((color) => color.hex)))
-  }, [props.colors])
+    setGridBlocks(makeGridPatterns(pickedColors.map((color) => color.hex)))
+  }, [pickedColors])
 
   const containerRef = useRef<HTMLDivElement | null>(null)
 

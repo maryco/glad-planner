@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { styled } from 'styled-components'
 import { HexColorPicker } from 'react-colorful'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import classNames from 'classnames'
 import { ReactComponent as IconCopy } from '@/assets/icon_content_copy.svg'
 import { Tooltip } from '@/components/Tooltip'
+import { usePickedColors, usePickedColorsDispatch } from '@/contexts/PickedColorsContext'
 
 type PickerButtonProps = {
   $bgcolor?: string
@@ -20,14 +21,15 @@ PickerButton.defaultProps = { $bgcolor: '#ffffff' }
 
 type Props = {
   id: string
-  color: string
-  onChangeHandler: (id: string, color: string) => void
 }
 
-function ColorPickerButton(props: Props) {
-  const { id, color, onChangeHandler } = props
+const ColorPickerButton = function ColorPickerButton(props: Props) {
+  const { id } = props
+  const dispatch = usePickedColorsDispatch()
+  const pickedColors = usePickedColors()
+
   const [pickerState, setPickerState] = useState<boolean>(false)
-  const [pickedColor, setPickedColor] = useState<string>(color)
+  const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.uuid === id)[0].hex)
   const [invertedColor, setInvertedColor] = useState<string>()
   const pickerRef = useRef(null)
   const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
@@ -38,17 +40,15 @@ function ColorPickerButton(props: Props) {
     'opacity-0 scale-0 origin-bottom-left': !pickerState,
   })
 
-  // TODO: https://ja.react.dev/reference/react/useEffect#reading-the-latest-props-and-state-from-an-effect
-  // https://ja.react.dev/reference/react/experimental_useEffectEvent
-  // const onPickerClosed = useEffectEvent
-  useEffect(() => {
-    if (!pickerState) {
-      setInvertedColor(invertedHexColor(pickedColor))
-      onChangeHandler(id, pickedColor)
+  const updateColor = (newColor: string) => {
+    // TODO: Debounce
+    setPickedColor(newColor)
+    setInvertedColor(invertedHexColor(newColor))
+    console.log(`${id} ... ${newColor}`)
+    if (dispatch) {
+      dispatch({ type: 'changed', id: id, colorValue: newColor })
     }
-    // https://kinsta.com/knowledgebase/react-hook-useeffect-has-a-missing-dependency/
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickerState])
+  }
 
   useClickOutside(pickerRef, closePicker)
 
@@ -83,19 +83,23 @@ function ColorPickerButton(props: Props) {
   return (
     <>
       <div className={pickerClasses} ref={pickerRef}>
-        <HexColorPicker color={pickedColor} onChange={setPickedColor} />
+        <HexColorPicker color={pickedColor} onChange={updateColor} />
       </div>
       <div className="h-full">
         <PickerButton
           $bgcolor={pickedColor}
           onClick={() => setPickerState(!pickerState)}
-          aria-label='Open color picker'
+          aria-label="Open color picker"
         />
-        <Tooltip message={`Copied! ${pickedColor}`} positionClass={'-top-8 left-0'} visible={isCopiedState} />
+        <Tooltip
+          message={`Copied! ${pickedColor}`}
+          positionClass={'-top-8 left-0'}
+          visible={isCopiedState}
+        />
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
           onClick={copyCurrentColor}
-          aria-label='Copy color of hex'
+          aria-label="Copy color of hex"
         >
           <IconCopy width={16} height={16} fill={invertedColor} />
         </span>

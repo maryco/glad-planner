@@ -27,6 +27,7 @@ function GridBlock(props: Props) {
     evenColors,
     gridSize = DEFAULT_GRID_SIZE,
   } = props.gridBlockProp
+  const { exportImage, positionX } = props
 
   const blocks = [0, 1, 2, 3].map((row) => {
     return [0, 1, 2, 3].map(
@@ -41,18 +42,16 @@ function GridBlock(props: Props) {
   const blockGroupRef = useRef<Konva.Group>(null)
   useEffect(() => {
     const canvas = blockGroupRef.current
-    props.exportImage(canvas?.toDataURL())
-    // TODO: https://kinsta.com/knowledgebase/react-hook-useeffect-has-a-missing-dependency/
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [oddColors, evenColors])
+    exportImage(canvas?.toDataURL())
+  }, [exportImage, oddColors, evenColors])
 
   return (
     <>
-      <Group x={props.positionX} ref={blockGroupRef}>
+      <Group x={positionX} ref={blockGroupRef}>
         {blocks.map((row, rowIndex) =>
           row.map((col, colIndex) => (
             <Rect
-              key={`grid${props.positionX}-${col.x}-${col.y}`}
+              key={`grid${positionX}-${col.x}-${col.y}`}
               x={col.x}
               y={col.y}
               width={gridSize}

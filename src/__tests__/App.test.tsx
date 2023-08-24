@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import App from '@/App'
 
-test('Render', async () => {
+test('render App component', async () => {
   render(<App />)
   await screen.findAllByRole('button')
   expect(screen.getAllByRole('button').length).toBe(7)
