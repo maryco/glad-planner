@@ -4,12 +4,11 @@ import { styled } from 'styled-components'
 
 import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
 import ColorPickerButton from '@/components/ColorPickerButton'
+import { CopyAsUrlButton } from '@/components/CopyAsUrlButton'
 import GridContainer from '@/components/GridContainer'
 import {
   PickedColorsProvider
 } from '@/contexts/PickedColorsContext'
-
-import { CopyAsUrlButton } from '@/components/CopyAsUrlButton'
 import { usePickedColors } from '@/contexts/usePickedColorsContext'
 
 type GradationPlateProps = {

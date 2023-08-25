@@ -34,14 +34,12 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
   const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.uuid === id)[0].hex)
   const pickedColorDebounced = useDebounce<string>(pickedColor, 600)
   const [invertedColor, setInvertedColor] = useState<string>()
-  const pickerRef = useRef(null)
-  const [copiedState, setCopiedState] = useState<boolean>(false)
-
   const pickerClasses = classNames({
     'absolute z-10 bottom-12': true,
     'opacity-1 transition-all ease-out duration-300': pickerState,
     'opacity-0 scale-0 origin-bottom-left': !pickerState,
   })
+  const pickerRef = useRef(null)
 
   useEffect(() => {
     if (dispatch) {
@@ -61,14 +59,8 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
   }
 
   function copyCurrentColor(): void {
-    setCopiedState(true)
     navigator.clipboard
       .writeText(pickedColor)
-      .then(() =>
-        setTimeout(() => {
-          setCopiedState(false)
-        }, 700)
-      )
       .catch((e) => console.error(e))
   }
 
@@ -91,22 +83,22 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
       </div>
       <div className="h-full">
         <PickerButton
-          $bgcolor={pickedColorDebounced}
-          onClick={() => setPickerState(!pickerState)}
-          aria-label="Open color picker"
-        />
+            $bgcolor={pickedColorDebounced}
+            onClick={() => setPickerState(!pickerState)}
+            aria-label="Open color picker"
+          />
         <Tooltip
           message={`Copied! ${pickedColor}`}
           positionClass={'-top-8 left-0'}
-          visible={copiedState}
-        />
-        <span
-          className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
-          onClick={copyCurrentColor}
-          aria-label="Copy color of hex"
         >
-          <IconCopy width={16} height={16} fill={invertedColor} />
-        </span>
+          <span
+            className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
+            onClick={copyCurrentColor}
+            aria-label="Copy color of hex"
+          >
+            <IconCopy width={16} height={16} fill={invertedColor} />
+          </span>
+        </Tooltip>
       </div>
     </>
   )

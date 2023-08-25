@@ -1,12 +1,9 @@
-import { useState } from 'react'
-
 import { ReactComponent as IconCheckCircle } from '@/assets/icon_check_circle.svg'
 import { Tooltip } from '@/components/Tooltip'
 import { usePickedColors } from '@/contexts/usePickedColorsContext'
 
 export function CopyAsUrlButton() {
   const pickedColors = usePickedColors()
-  const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
 
   function copyAsUrl(): void {
     const baseUrl =
@@ -21,24 +18,16 @@ export function CopyAsUrlButton() {
       .catch((e) => console.error(e))
   }
 
-  function snapshot() {
-    copyAsUrl()
-    setIsCopiedState(true)
-    setTimeout(() => {
-      setIsCopiedState(false)
-    }, 700)
-  }
-
   return (
     <>
       <Tooltip
         message={'URL Copied!'}
         positionClass={'top-2 -right-20'}
-        visible={isCopiedState}
-      />
-      <button onClick={snapshot} aria-label="Copy all colors as url">
-        <IconCheckCircle width={40} height={40} fill={'#94a3b8'} />
-      </button>
+      >
+        <button onClick={copyAsUrl} aria-label="Copy all colors as url">
+          <IconCheckCircle width={40} height={40} fill={'#94a3b8'} />
+        </button>
+      </Tooltip>
     </>
   )
 }
