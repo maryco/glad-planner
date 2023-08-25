@@ -1,7 +1,8 @@
-import { usePickedColors } from '@/contexts/PickedColorsContext'
 import { useState } from 'react'
-import { Tooltip } from '@/components/Tooltip'
+
 import { ReactComponent as IconCheckCircle } from '@/assets/icon_check_circle.svg'
+import { Tooltip } from '@/components/Tooltip'
+import { usePickedColors } from '@/contexts/usePickedColorsContext'
 
 export function CopyAsUrlButton() {
   const pickedColors = usePickedColors()
@@ -12,7 +13,6 @@ export function CopyAsUrlButton() {
       import.meta.env.MODE === 'demo'
         ? import.meta.env.BASE_URL
         : window.location.origin
-    console.log(pickedColors)
     navigator.clipboard
       .writeText(
         `${baseUrl}/?` +

@@ -16,12 +16,23 @@ module.exports = {
     project: ['./tsconfig.json', './tsconfig.node.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'import', 'unused-imports'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
+    'unused-imports/no-unused-imports': 'warn',
+    'import/order': [
+      'warn',
+      {
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'always',
+        'pathGroupsExcludedImportTypes': ['builtin'],
+        'alphabetize': { 'order': 'asc', 'caseInsensitive': true },
+        'pathGroups': []
+      }
+    ]
   },
   settings: {
     'import/resolver': { typescript: {} },

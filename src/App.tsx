@@ -1,14 +1,16 @@
+import classNames from 'classnames'
 import { useState } from 'react'
 import { styled } from 'styled-components'
-import classNames from 'classnames'
+
+import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
 import ColorPickerButton from '@/components/ColorPickerButton'
 import GridContainer from '@/components/GridContainer'
-import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
 import {
-  PickedColorsProvider,
-  usePickedColors,
+  PickedColorsProvider
 } from '@/contexts/PickedColorsContext'
+
 import { CopyAsUrlButton } from './components/CopyAsUrlButton'
+import { usePickedColors } from './contexts/usePickedColorsContext'
 
 type GradationPlateProps = {
   $bgurl: string | null | undefined

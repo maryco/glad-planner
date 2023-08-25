@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useReducer } from 'react'
+import { ReactNode, createContext, useReducer } from 'react'
 
 // https://ja.react.dev/learn/scaling-up-with-reducer-and-context
 
@@ -38,13 +38,13 @@ interface Props {
   children?: ReactNode
 }
 
-export function usePickedColors() {
-  return useContext(PickedColorsContext)
-}
+// export function usePickedColors() {
+//   return useContext(PickedColorsContext)
+// }
 
-export function usePickedColorsDispatch() {
-  return useContext(PickedColorsDispatchContext)
-}
+// export function usePickedColorsDispatch() {
+//   return useContext(PickedColorsDispatchContext)
+// }
 
 export function PickedColorsProvider({ children }: Props) {
   const [pickedColors, dispatch] = useReducer(

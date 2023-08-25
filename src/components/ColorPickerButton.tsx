@@ -1,11 +1,13 @@
-import { useRef, useState } from 'react'
-import { styled } from 'styled-components'
-import { HexColorPicker } from 'react-colorful'
-import { useClickOutside } from '@/hooks/useClickOutside'
 import classNames from 'classnames'
+import { useEffect, useRef, useState } from 'react'
+import { HexColorPicker } from 'react-colorful'
+import { styled } from 'styled-components'
+
 import { ReactComponent as IconCopy } from '@/assets/icon_content_copy.svg'
 import { Tooltip } from '@/components/Tooltip'
-import { usePickedColors, usePickedColorsDispatch } from '@/contexts/PickedColorsContext'
+import { usePickedColors, usePickedColorsDispatch } from '@/contexts/usePickedColorsContext'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { useDebounce } from '@/hooks/useDebounce'
 
 type PickerButtonProps = {
   $bgcolor?: string
@@ -30,6 +32,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
 
   const [pickerState, setPickerState] = useState<boolean>(false)
   const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.uuid === id)[0].hex)
+  const pickedColorDebounced = useDebounce<string>(pickedColor, 600)
   const [invertedColor, setInvertedColor] = useState<string>()
   const pickerRef = useRef(null)
   const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
@@ -40,14 +43,15 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
     'opacity-0 scale-0 origin-bottom-left': !pickerState,
   })
 
+  useEffect(() => {
+    if (dispatch) {
+      dispatch({ type: 'changed', id: id, colorValue: pickedColorDebounced })
+    }
+  }, [pickedColorDebounced, id, dispatch])
+
   const updateColor = (newColor: string) => {
-    // TODO: Debounce
     setPickedColor(newColor)
     setInvertedColor(invertedHexColor(newColor))
-    console.log(`${id} ... ${newColor}`)
-    if (dispatch) {
-      dispatch({ type: 'changed', id: id, colorValue: newColor })
-    }
   }
 
   useClickOutside(pickerRef, closePicker)
@@ -87,7 +91,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
       </div>
       <div className="h-full">
         <PickerButton
-          $bgcolor={pickedColor}
+          $bgcolor={pickedColorDebounced}
           onClick={() => setPickerState(!pickerState)}
           aria-label="Open color picker"
         />

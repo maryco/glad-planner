@@ -1,9 +1,10 @@
-import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
+
 import GridBlock, { GridBlockProp } from '@/components/GridBlock'
-import makeGridPatterns from '@/utils/makeGridPattern'
 import { PickedColorsContext } from '@/contexts/PickedColorsContext'
+import { useResizeObserver } from '@/hooks/useResizeObserver'
+import makeGridPatterns from '@/utils/makeGridPattern'
 
 type Props = {
   exportImageHandlers: CallableFunction[]
