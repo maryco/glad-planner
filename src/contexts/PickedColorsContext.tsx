@@ -3,7 +3,7 @@ import { ReactNode, createContext, useReducer } from 'react'
 // https://ja.react.dev/learn/scaling-up-with-reducer-and-context
 
 export type Color = {
-  uuid: string
+  id: string
   hex: string
   order: number
 }
@@ -21,11 +21,11 @@ const isValidColorHex = (value: string): boolean => {
 const searchParams = new URLSearchParams(window.location.search)
 const colorParams = searchParams.getAll('color')
 const initialPickedColors = [
-  { uuid: '1', hex: setInitialColor(colorParams, 0, '#f9fafb'), order: 0 },
-  { uuid: '2', hex: setInitialColor(colorParams, 1, '#f3f4f6'), order: 1 },
-  { uuid: '3', hex: setInitialColor(colorParams, 2, '#e5e7eb'), order: 2 },
-  { uuid: '4', hex: setInitialColor(colorParams, 3, '#d1d5db'), order: 3 },
-  { uuid: '5', hex: setInitialColor(colorParams, 4, '#9ca3af'), order: 4 },
+  { id: '1', hex: setInitialColor(colorParams, 0, '#f9fafb'), order: 0 },
+  { id: '2', hex: setInitialColor(colorParams, 1, '#f3f4f6'), order: 1 },
+  { id: '3', hex: setInitialColor(colorParams, 2, '#e5e7eb'), order: 2 },
+  { id: '4', hex: setInitialColor(colorParams, 3, '#d1d5db'), order: 3 },
+  { id: '5', hex: setInitialColor(colorParams, 4, '#9ca3af'), order: 4 },
 ]
 
 export const PickedColorsContext = createContext<Color[]>(initialPickedColors)
@@ -63,8 +63,8 @@ function pickedColorsReducer(pickedColors: Color[], action: Action): Color[] {
   switch (action.type) {
     case 'changed': {
       return pickedColors.map((p) =>
-        p.uuid === action.id
-          ? { uuid: action.id, hex: action.colorValue, order: p.order }
+        p.id === action.id
+          ? { id: action.id, hex: action.colorValue, order: p.order }
           : p
       )
     }

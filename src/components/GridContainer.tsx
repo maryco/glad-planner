@@ -1,8 +1,8 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 
 import GridBlock, { GridBlockProp } from '@/components/GridBlock'
-import { PickedColorsContext } from '@/contexts/PickedColorsContext'
+import { usePickedColors } from '@/contexts/usePickedColorsContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import makeGridPatterns from '@/utils/makeGridPattern'
 
@@ -16,7 +16,7 @@ function GridContainer(props: Props) {
   const [stageHeight, setStageHeight] = useState(0)
   const [gridBlocks, setGridBlocks] = useState<GridBlockProp[]>([])
 
-  const pickedColors = useContext(PickedColorsContext);
+  const pickedColors = usePickedColors();
   useEffect(() => {
     setGridBlocks(makeGridPatterns(pickedColors.map((color) => color.hex)))
   }, [pickedColors])

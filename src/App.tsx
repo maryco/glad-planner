@@ -82,11 +82,11 @@ function App() {
                 .sort((a, b) => a.order - b.order)
                 .map((color) => (
                   <li
-                    key={color.uuid}
+                    key={color.id}
                     className="relative w-10 h-10"
                     aria-colindex={color.order}
                   >
-                    <ColorPickerButton id={color.uuid} />
+                    <ColorPickerButton id={color.id} />
                   </li>
                 ))}
               <li className="w-10 h-10"></li>

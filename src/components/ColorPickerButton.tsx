@@ -31,7 +31,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
   const pickedColors = usePickedColors()
 
   const [pickerState, setPickerState] = useState<boolean>(false)
-  const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.uuid === id)[0].hex)
+  const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.id === id)[0].hex)
   const pickedColorDebounced = useDebounce<string>(pickedColor, 600)
   const [invertedColor, setInvertedColor] = useState<string>()
   const pickerClasses = classNames({
