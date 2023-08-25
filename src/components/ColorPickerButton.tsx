@@ -35,7 +35,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
   const pickedColorDebounced = useDebounce<string>(pickedColor, 600)
   const [invertedColor, setInvertedColor] = useState<string>()
   const pickerRef = useRef(null)
-  const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
+  const [copiedState, setCopiedState] = useState<boolean>(false)
 
   const pickerClasses = classNames({
     'absolute z-10 bottom-12': true,
@@ -61,12 +61,12 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
   }
 
   function copyCurrentColor(): void {
-    setIsCopiedState(true)
+    setCopiedState(true)
     navigator.clipboard
       .writeText(pickedColor)
       .then(() =>
         setTimeout(() => {
-          setIsCopiedState(false)
+          setCopiedState(false)
         }, 700)
       )
       .catch((e) => console.error(e))
@@ -98,7 +98,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
         <Tooltip
           message={`Copied! ${pickedColor}`}
           positionClass={'-top-8 left-0'}
-          visible={isCopiedState}
+          visible={copiedState}
         />
         <span
           className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"

@@ -9,16 +9,16 @@ import {
   PickedColorsProvider
 } from '@/contexts/PickedColorsContext'
 
-import { CopyAsUrlButton } from './components/CopyAsUrlButton'
-import { usePickedColors } from './contexts/usePickedColorsContext'
+import { CopyAsUrlButton } from '@/components/CopyAsUrlButton'
+import { usePickedColors } from '@/contexts/usePickedColorsContext'
 
 type GradationPlateProps = {
-  $bgurl: string | null | undefined
+  $backgroundUrl: string | null | undefined
 }
 const GradationPlate = styled.div<GradationPlateProps>`
   width: 100%;
   flex-grow: 1;
-  background-image: url(${(props) => props.$bgurl || ''});
+  background-image: url(${(props) => props.$backgroundUrl || ''});
   background-size: 20px;
 `
 
@@ -72,7 +72,7 @@ function App() {
       <div className="flex flex-col h-screen w-full print:h-[1500px]">
         <div className={previewContainerClasses}>
           {gridImages.map((gridImage, index) => (
-            <GradationPlate key={index} $bgurl={gridImage} />
+            <GradationPlate key={index} $backgroundUrl={gridImage} />
           ))}
         </div>
         <PickedColorsProvider>
