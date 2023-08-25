@@ -5,12 +5,12 @@ type Props = {
   message: string
   positionClass: string
   children: ReactNode
-  delay?: number
+  duration?: number
 }
 
 export const Tooltip = memo(function Tooltip(props: Props) {
   const children = props.children
-  const delay = props?.delay || 700
+  const duration = props?.duration || 700
   const classes = classNames({
     'absolute z-20': true,
     [props.positionClass]: true,
@@ -23,7 +23,7 @@ export const Tooltip = memo(function Tooltip(props: Props) {
     setVisibleState(true)
     setTimeout(() => {
       setVisibleState(false)
-    }, delay)
+    }, duration)
   }
 
   return (

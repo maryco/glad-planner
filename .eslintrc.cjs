@@ -17,6 +17,16 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   plugins: ['react-refresh', 'import', 'unused-imports'],
+  overrides: [
+    {
+      files: ['*.test.*'],
+      rules: {
+        // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/unbound-method.md
+        // https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/unbound-method.md
+        '@typescript-eslint/unbound-method': 'off',
+      }
+    }
+  ],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
