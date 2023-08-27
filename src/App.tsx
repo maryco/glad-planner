@@ -22,6 +22,9 @@ const GradationPlate = styled.div<GradationPlateProps>`
 `
 
 function App() {
+  const searchParams = new URLSearchParams(window.location.search)
+  const payloadColors = searchParams.getAll('color')
+
   const pickedColors = usePickedColors()
 
   const [gridImage1, setGridImage1] = useState<string | null>()
@@ -74,7 +77,7 @@ function App() {
             <GradationPlate key={index} $backgroundUrl={gridImage} />
           ))}
         </div>
-        <PickedColorsProvider>
+        <PickedColorsProvider initialColors={payloadColors}>
           <div className="w-full p-4 bg-gray-200">
             <GridContainer exportImageHandlers={setGridImages} />
             <ul className="flex gap-4">

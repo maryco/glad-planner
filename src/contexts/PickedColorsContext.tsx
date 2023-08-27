@@ -8,37 +8,45 @@ export type Color = {
   order: number
 }
 
-const setInitialColor = (colors: string[], index: number, fallBack: string) => {
-  return colors.length >= index + 1 && isValidColorHex(colors[index])
-    ? `#${colors[index]}`
-    : fallBack
+export type PickedColorAction = {
+  type: 'changed'
+  id: string
+  colorValue: string
 }
+
+const defaultPickedColors = [
+  { id: '1', hex: '#f9fafb', order: 0 },
+  { id: '2', hex: '#f3f4f6', order: 1 },
+  { id: '3', hex: '#e5e7eb', order: 2 },
+  { id: '4', hex: '#d1d5db', order: 3 },
+  { id: '5', hex: '#9ca3af', order: 4 },
+]
+
+export const PickedColorsContext = createContext<Color[]>(defaultPickedColors)
+export const PickedColorsDispatchContext =
+  createContext<React.Dispatch<PickedColorAction> | null>(null)
 
 const isValidColorHex = (value: string): boolean => {
   return value !== undefined && /^([0-9A-F]{2}){3}$/gi.test(value)
 }
 
-const searchParams = new URLSearchParams(window.location.search)
-const colorParams = searchParams.getAll('color')
-const initialPickedColors = [
-  { id: '1', hex: setInitialColor(colorParams, 0, '#f9fafb'), order: 0 },
-  { id: '2', hex: setInitialColor(colorParams, 1, '#f3f4f6'), order: 1 },
-  { id: '3', hex: setInitialColor(colorParams, 2, '#e5e7eb'), order: 2 },
-  { id: '4', hex: setInitialColor(colorParams, 3, '#d1d5db'), order: 3 },
-  { id: '5', hex: setInitialColor(colorParams, 4, '#9ca3af'), order: 4 },
-]
-
-export const PickedColorsContext = createContext<Color[]>(initialPickedColors)
-export const PickedColorsDispatchContext =
-  createContext<React.Dispatch<Action> | null>(null)
+const getValidColor = (colors: string[], index: number, fallBack: string) => {
+  return colors.length >= index + 1 && isValidColorHex(colors[index])
+    ? `#${colors[index]}`
+    : fallBack
+}
 
 // https://stackoverflow.com/questions/55370851/how-to-fix-binding-element-children-implicitly-has-an-any-type-ts7031
 interface Props {
   // any props that come into the component
   children?: ReactNode
+  initialColors: string[]
 }
 
-export function PickedColorsProvider({ children }: Props) {
+export function PickedColorsProvider({ children, initialColors }: Props) {
+  const initialPickedColors = defaultPickedColors.map((c, index) => {
+    return { ...c, hex: getValidColor(initialColors, index, c.hex) }
+  })
   const [pickedColors, dispatch] = useReducer(
     pickedColorsReducer,
     initialPickedColors
@@ -53,21 +61,22 @@ export function PickedColorsProvider({ children }: Props) {
   )
 }
 
-type Action = {
-  type: 'changed'
-  id: string
-  colorValue: string
-}
-
-function pickedColorsReducer(pickedColors: Color[], action: Action): Color[] {
+function pickedColorsReducer(
+  pickedColors: Color[],
+  action: PickedColorAction
+): Color[] {
   switch (action.type) {
     case 'changed': {
       return pickedColors.map((p) =>
-        p.id === action.id
+        p.id === action.id &&
+        isValidColorHex(action.colorValue?.replace('#', ''))
           ? { id: action.id, hex: action.colorValue, order: p.order }
           : p
       )
     }
+    // https://modern-web.dev/docs/test-runner/writing-tests/code-coverage/#ignoring-uncovered-lines
+    // > ignoring uncovered lines when calculating code coverage through the use of the following custom comment
+    /* c8 ignore next 3 */
     default: {
       throw Error(`Unknown action: ${action ? action.type : 'unknown'}`)
     }

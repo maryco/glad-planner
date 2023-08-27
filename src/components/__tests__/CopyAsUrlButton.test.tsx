@@ -5,11 +5,10 @@ import { vi } from 'vitest'
 
 import { CopyAsUrlButton } from '@/components/CopyAsUrlButton'
 
+const mock = vi.fn(() => {})
 function executeAfterMilliseconds(func: () => void, milliseconds: number) {
   setTimeout(func, milliseconds)
 }
-
-const mock = vi.fn(() => {})
 
 // https://stackoverflow.com/questions/62351935/how-to-mock-navigator-clipboard-writetext-in-jest
 Object.assign(navigator, {
@@ -18,7 +17,7 @@ Object.assign(navigator, {
     // Allow empty functions.
     // writeText: async function () {},
     writeText: async () => Promise.resolve(),
-  }
+  },
 })
 
 describe('Render CopyAsUrlButton component', () => {
@@ -36,9 +35,7 @@ describe('Render CopyAsUrlButton component', () => {
   })
 
   test('not render tooltip in first', () => {
-    render(
-      <CopyAsUrlButton />
-    )
+    render(<CopyAsUrlButton />)
     expect(screen.findByLabelText('Copy all colors as url'))
       .resolves.toBeVisible()
       .catch(() => {})
@@ -52,9 +49,7 @@ describe('Render CopyAsUrlButton component', () => {
   })
 
   test('render tooltip after click event', async () => {
-    render(
-      <CopyAsUrlButton />
-    )
+    render(<CopyAsUrlButton />)
     expect(screen.findByLabelText('Copy all colors as url'))
       .resolves.toBeVisible()
       .catch(() => {})
@@ -68,11 +63,9 @@ describe('Render CopyAsUrlButton component', () => {
       .catch(() => {})
   })
 
-  test('copy colors as url', async () => {    
+  test('copy colors as url', async () => {
     vi.spyOn(navigator.clipboard, 'writeText')
-    render(
-      <CopyAsUrlButton />
-    )
+    render(<CopyAsUrlButton />)
     expect(screen.findByLabelText('Copy all colors as url'))
       .resolves.toBeVisible()
       .catch(() => {})
@@ -81,7 +74,8 @@ describe('Render CopyAsUrlButton component', () => {
     executeAfterMilliseconds(mock, 1000)
     vi.runAllTimers()
     expect(mock).toHaveBeenCalledTimes(1)
-    expect(navigator.clipboard.writeText)
-      .toHaveBeenCalledWith('http://localhost:3000/?color=f9fafb&color=f3f4f6&color=e5e7eb&color=d1d5db&color=9ca3af')
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      'http://localhost:3000/?color=f9fafb&color=f3f4f6&color=e5e7eb&color=d1d5db&color=9ca3af'
+    )
   })
 })
