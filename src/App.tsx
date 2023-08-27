@@ -72,7 +72,7 @@ function App() {
   return (
     <>
       <div className="flex flex-col h-screen w-full print:h-[1500px]">
-        <div className={previewContainerClasses}>
+        <div className={previewContainerClasses} role="img" aria-label="Concat all patterns image">
           {gridImages.map((gridImage, index) => (
             <GradationPlate key={index} $backgroundUrl={gridImage} />
           ))}

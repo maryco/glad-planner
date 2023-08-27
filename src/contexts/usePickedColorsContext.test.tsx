@@ -64,7 +64,7 @@ describe('Test usePickedColorsContext', () => {
     expect(result.current.pickedColors).toMatchObject(defaultValue)
   })
 
-  test('with initial color', async () => {
+  test('with initial color', () => {
     // https://testing-library.com/docs/react-testing-library/api/#renderhook-options
     // > NOTE: When using renderHook in conjunction with the wrapper and initialProps options, the initialProps are not passed to the wrapper component.
     const testColors = [
