@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import { styled } from 'styled-components'
-import { HexColorPicker } from 'react-colorful'
-import { useClickOutside } from '@/hooks/useClickOutside'
 import classNames from 'classnames'
+import { useEffect, useRef, useState } from 'react'
+import { HexColorPicker } from 'react-colorful'
+import { styled } from 'styled-components'
+
 import { ReactComponent as IconCopy } from '@/assets/icon_content_copy.svg'
 import { Tooltip } from '@/components/Tooltip'
+import { usePickedColors, usePickedColorsDispatch } from '@/contexts/usePickedColorsContext'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { useDebounce } from '@/hooks/useDebounce'
 
 type PickerButtonProps = {
   $bgcolor?: string
@@ -20,35 +23,34 @@ PickerButton.defaultProps = { $bgcolor: '#ffffff' }
 
 type Props = {
   id: string
-  color: string
-  onChangeHandler: (id: string, color: string) => void
 }
 
-function ColorPickerButton(props: Props) {
-  const { id, color, onChangeHandler } = props
-  const [pickerState, setPickerState] = useState<boolean>(false)
-  const [pickedColor, setPickedColor] = useState<string>(color)
-  const [invertedColor, setInvertedColor] = useState<string>()
-  const pickerRef = useRef(null)
-  const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
+const ColorPickerButton = function ColorPickerButton(props: Props) {
+  const { id } = props
+  const dispatch = usePickedColorsDispatch()
+  const pickedColors = usePickedColors()
 
+  const [pickerState, setPickerState] = useState<boolean>(false)
+  const [pickedColor, setPickedColor] = useState<string>(pickedColors.filter((c) => c.id === id)[0].hex)
+  const pickedColorDebounced = useDebounce<string>(pickedColor, 600)
+  const [invertedColor, setInvertedColor] = useState<string>()
   const pickerClasses = classNames({
     'absolute z-10 bottom-12': true,
     'opacity-1 transition-all ease-out duration-300': pickerState,
     'opacity-0 scale-0 origin-bottom-left': !pickerState,
   })
+  const pickerRef = useRef(null)
 
-  // TODO: https://ja.react.dev/reference/react/useEffect#reading-the-latest-props-and-state-from-an-effect
-  // https://ja.react.dev/reference/react/experimental_useEffectEvent
-  // const onPickerClosed = useEffectEvent
   useEffect(() => {
-    if (!pickerState) {
-      setInvertedColor(invertedHexColor(pickedColor))
-      onChangeHandler(id, pickedColor)
+    if (dispatch) {
+      dispatch({ type: 'changed', id: id, colorValue: pickedColorDebounced })
     }
-    // https://kinsta.com/knowledgebase/react-hook-useeffect-has-a-missing-dependency/
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickerState])
+  }, [pickedColorDebounced, id, dispatch])
+
+  const updateColor = (newColor: string) => {
+    setPickedColor(newColor)
+    setInvertedColor(invertedHexColor(newColor))
+  }
 
   useClickOutside(pickerRef, closePicker)
 
@@ -57,14 +59,8 @@ function ColorPickerButton(props: Props) {
   }
 
   function copyCurrentColor(): void {
-    setIsCopiedState(true)
     navigator.clipboard
       .writeText(pickedColor)
-      .then(() =>
-        setTimeout(() => {
-          setIsCopiedState(false)
-        }, 700)
-      )
       .catch((e) => console.error(e))
   }
 
@@ -82,23 +78,27 @@ function ColorPickerButton(props: Props) {
 
   return (
     <>
-      <div className={pickerClasses} ref={pickerRef}>
-        <HexColorPicker color={pickedColor} onChange={setPickedColor} />
+      <div className={pickerClasses} ref={pickerRef} aria-label="Color Picker">
+        <HexColorPicker color={pickedColor} onChange={updateColor} />
       </div>
       <div className="h-full">
         <PickerButton
-          $bgcolor={pickedColor}
-          onClick={() => setPickerState(!pickerState)}
-          aria-label='Open color picker'
-        />
-        <Tooltip message={`Copied! ${pickedColor}`} positionClass={'-top-8 left-0'} visible={isCopiedState} />
-        <span
-          className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
-          onClick={copyCurrentColor}
-          aria-label='Copy color of hex'
+            $bgcolor={pickedColorDebounced}
+            onClick={() => setPickerState(!pickerState)}
+            aria-label="Open color picker"
+          />
+        <Tooltip
+          message={`Copied! ${pickedColor}`}
+          positionClass={'-top-8 left-0'}
         >
-          <IconCopy width={16} height={16} fill={invertedColor} />
-        </span>
+          <span
+            className="absolute right-0.5 bottom-1 opacity-50 cursor-pointer"
+            onClick={copyCurrentColor}
+            aria-label="Copy color of hex"
+          >
+            <IconCopy width={16} height={16} fill={invertedColor} />
+          </span>
+        </Tooltip>
       </div>
     </>
   )

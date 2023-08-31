@@ -1,7 +1,16 @@
+import '@testing-library/jest-dom' // prevent error : > Invalid Chai property: toBeInTheDocument
 import { vi } from 'vitest'
 
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
+// エラーにならなければ十分なのでスタブ化でOK
+// global.ResizeObserver = vi.fn().mockImplementation(() => ({
+//   observe: vi.fn(),
+//   unobserve: vi.fn(),
+//   disconnect: vi.fn(),
+// }))
+// https://vitest.dev/guide/mocking.html#globals
+const ResizeObserverMock = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+vi.stubGlobal('ResizeObserver', ResizeObserverMock)

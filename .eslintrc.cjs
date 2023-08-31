@@ -16,12 +16,33 @@ module.exports = {
     project: ['./tsconfig.json', './tsconfig.node.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'import', 'unused-imports'],
+  overrides: [
+    {
+      files: ['*.test.*'],
+      rules: {
+        // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/unbound-method.md
+        // https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/unbound-method.md
+        '@typescript-eslint/unbound-method': 'off',
+      }
+    }
+  ],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
+    'unused-imports/no-unused-imports': 'warn',
+    'import/order': [
+      'warn',
+      {
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'always',
+        'pathGroupsExcludedImportTypes': ['builtin'],
+        'alphabetize': { 'order': 'asc', 'caseInsensitive': true },
+        'pathGroups': []
+      }
+    ]
   },
   settings: {
     'import/resolver': { typescript: {} },

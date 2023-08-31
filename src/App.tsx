@@ -1,29 +1,31 @@
+import classNames from 'classnames'
 import { useState } from 'react'
 import { styled } from 'styled-components'
-import classNames from 'classnames'
-import ColorPickerButton from '@/components/ColorPickerButton'
-import GridContainer from '@/components/GridContainer'
+
 import { ReactComponent as IconFrameReload } from '@/assets/icon_frame_reload.svg'
-import { ReactComponent as IconCheckCircle } from '@/assets/icon_check_circle.svg'
-import { usePickerColors } from '@/hooks/usePickerColors'
-import { Tooltip } from '@/components/Tooltip.tsx'
+import ColorPickerButton from '@/components/ColorPickerButton'
+import { CopyAsUrlButton } from '@/components/CopyAsUrlButton'
+import GridContainer from '@/components/GridContainer'
+import {
+  PickedColorsProvider
+} from '@/contexts/PickedColorsContext'
+import { usePickedColors } from '@/contexts/usePickedColorsContext'
 
 type GradationPlateProps = {
-  $bgurl: string | null | undefined
+  $backgroundUrl: string | null | undefined
 }
 const GradationPlate = styled.div<GradationPlateProps>`
   width: 100%;
   flex-grow: 1;
-  background-image: url(${(props) => props.$bgurl || ''});
+  background-image: url(${(props) => props.$backgroundUrl || ''});
   background-size: 20px;
 `
 
-// FIXME: ここでいいのか？
-const searchParams = new URLSearchParams(window.location.search)
-const colorParams = searchParams.getAll('color')
-
 function App() {
-  const { pickerColors, setPickerColors, copyAsUrl } = usePickerColors(colorParams)
+  const searchParams = new URLSearchParams(window.location.search)
+  const payloadColors = searchParams.getAll('color')
+
+  const pickedColors = usePickedColors()
 
   const [gridImage1, setGridImage1] = useState<string | null>()
   const [gridImage2, setGridImage2] = useState<string | null>()
@@ -62,24 +64,6 @@ function App() {
     gridImage9
   )
 
-  function updateGrid(id: string, colorVal: string) {
-    // console.log(`${id} => ${colorVal}`)
-    setPickerColors(
-      pickerColors.map((p) =>
-        p.uuid === id ? { uuid: id, hex: colorVal, order: p.order } : p
-      )
-    )
-  }
-
-  const [isCopiedState, setIsCopiedState] = useState<boolean>(false)
-  function snapshot() {
-    copyAsUrl()
-    setIsCopiedState(true)
-    setTimeout(() => {
-      setIsCopiedState(false)
-    }, 700)
-  }
-
   const previewContainerClasses = classNames('flex-grow flex h-auto w-full', {
     'flex-col': previewVerticalState,
     'flex-row': !previewVerticalState,
@@ -88,56 +72,43 @@ function App() {
   return (
     <>
       <div className="flex flex-col h-screen w-full print:h-[1500px]">
-        <div className={previewContainerClasses}>
+        <div className={previewContainerClasses} role="img" aria-label="Concat all patterns image">
           {gridImages.map((gridImage, index) => (
-            <GradationPlate key={index} $bgurl={gridImage} />
+            <GradationPlate key={index} $backgroundUrl={gridImage} />
           ))}
         </div>
-        <div className="w-full p-4 bg-gray-200">
-          <GridContainer
-            colors={pickerColors.sort((a, b) => a.order - b.order)}
-            exportImageHandlers={setGridImages}
-          />
-          <ul className="flex gap-4">
-            {pickerColors
-              .sort((a, b) => a.order - b.order)
-              .map((color) => (
-                <li key={color.uuid} className="relative w-10 h-10" aria-colindex={color.order}>
-                  <ColorPickerButton
-                    id={color.uuid}
-                    color={color.hex}
-                    onChangeHandler={updateGrid}
-                  />
-                </li>
-              ))}
-            <li className="w-10 h-10"></li>
-            <li className="w-10 h-10">
-              <button
-                onClick={() => setPreviewDirectionState(!previewVerticalState)}
-                aria-label='Switch orientation'
-              >
-                <IconFrameReload
-                  width={40}
-                  height={40}
-                  fill={'#94a3b8'}
-                />
-              </button>
-            </li>
-            <li className="relative w-10 h-10">
-              <Tooltip message={'URL Copied!'} positionClass={'top-2 -right-20'} visible={isCopiedState} />
-              <button
-                onClick={snapshot}
-                aria-label='Copy all colors as url'
-              >
-                <IconCheckCircle
-                  width={40}
-                  height={40}
-                  fill={'#94a3b8'}
-                />
-              </button>
-            </li>
-          </ul>
-        </div>
+        <PickedColorsProvider initialColors={payloadColors}>
+          <div className="w-full p-4 bg-gray-200">
+            <GridContainer exportImageHandlers={setGridImages} />
+            <ul className="flex gap-4">
+              {pickedColors
+                .sort((a, b) => a.order - b.order)
+                .map((color) => (
+                  <li
+                    key={color.id}
+                    className="relative w-10 h-10"
+                    aria-colindex={color.order}
+                  >
+                    <ColorPickerButton id={color.id} />
+                  </li>
+                ))}
+              <li className="w-10 h-10"></li>
+              <li className="w-10 h-10">
+                <button
+                  onClick={() =>
+                    setPreviewDirectionState(!previewVerticalState)
+                  }
+                  aria-label="Switch orientation"
+                >
+                  <IconFrameReload width={40} height={40} fill={'#94a3b8'} />
+                </button>
+              </li>
+              <li className="relative w-10 h-10">
+                <CopyAsUrlButton />
+              </li>
+            </ul>
+          </div>
+        </PickedColorsProvider>
       </div>
     </>
   )
