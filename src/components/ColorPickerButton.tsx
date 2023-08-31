@@ -78,7 +78,7 @@ const ColorPickerButton = function ColorPickerButton(props: Props) {
 
   return (
     <>
-      <div className={pickerClasses} ref={pickerRef}>
+      <div className={pickerClasses} ref={pickerRef} aria-label="Color Picker">
         <HexColorPicker color={pickedColor} onChange={updateColor} />
       </div>
       <div className="h-full">

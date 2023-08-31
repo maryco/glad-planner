@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom' // prevent error : > Invalid Chai property: toBeInTheDocument
 import { vi } from 'vitest'
 
 // エラーにならなければ十分なのでスタブ化でOK
