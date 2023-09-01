@@ -8,6 +8,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // https://github.com/vitest-dev/vitest/issues/1982
+    // Error: Module did not self-register when using Canvas + jsdom
+    threads: false,
     setupFiles: ['/src/__tests__/vitest.setup.ts'],
   },
   resolve: {
